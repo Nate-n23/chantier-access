@@ -126,9 +126,34 @@ public class BadgeController {
                 (obs, oldVal, newVal) -> {
                     if (newVal != null) {
                         badgeSelectionne = newVal;
-                        formTitle.setText("Badge: " + newVal.getCode());
+                        remplirFormulaire(newVal);
+                    } else {
+                        modeCreation();
                     }
                 });
+    }
+
+    private void remplirFormulaire(Badge b) {
+        formTitle.setText("Modifier Badge: " + b.getCode());
+        codeGenereLabel.setText(b.getCode());
+        typeBadgeCombo.setValue(b.getTypeBadge().name());
+        dateExpirationPicker.setValue(b.getDateExpiration());
+        
+        // Sélectionner l'intervenant dans le combo
+        for (Intervenant i : intervenantCombo.getItems()) {
+            if (i.getId() == b.getIntervenantId()) {
+                intervenantCombo.setValue(i);
+                break;
+            }
+        }
+
+        // Cocher les zones autorisées
+        List<Zone> autorisees = badgeDAO.findZonesForBadge(b.getId());
+        for (CheckBox cb : zonesCheckboxes) {
+            int zoneId = (int) cb.getUserData();
+            boolean isAutorisee = autorisees.stream().anyMatch(z -> z.getId() == zoneId);
+            cb.setSelected(isAutorisee);
+        }
     }
 
     /**
@@ -143,47 +168,81 @@ public class BadgeController {
         codeGenereLabel.setText(codeTemp);
     }
 
+    @FXML
+    private void modeCreation() {
+
+        badgeSelectionne = null;
+        formTitle.setText("Nouveau Badge");
+        genererCode();
+        intervenantCombo.setValue(null);
+        typeBadgeCombo.setValue("PERMANENT");
+        zonesCheckboxes.forEach(cb -> cb.setSelected(false));
+    }
+
     /**
-     * Sauvegarde un nouveau badge en base de données.
+     * Sauvegarde ou met à jour un badge.
      */
     @FXML
-    private void handleCreer() {
+    private void handleSauvegarder() {
         SessionManager.getInstance().rafraichirActivite();
         Intervenant intervenant = intervenantCombo.getValue();
         if (intervenant == null) {
             afficherErreur("Veuillez sélectionner un intervenant."); return;
         }
-        String type = typeBadgeCombo.getValue();
-        if (type == null) {
-            afficherErreur("Veuillez sélectionner un type de badge."); return;
-        }
-        LocalDate expiration = dateExpirationPicker.getValue();
 
-        Badge badge = new Badge();
-        badge.setCode(codeTemp);
-        badge.setTypeBadge(Badge.TypeBadge.valueOf(type));
-        badge.setDateCreation(LocalDateTime.now());
-        badge.setDateExpiration(expiration);
-        badge.setEstActif(true);
-        badge.setIntervenantId(intervenant.getId());
-
-        try {
-            badgeDAO.save(badge);
-            // Associer les zones sélectionnées
-            for (CheckBox cb : zonesCheckboxes) {
-                if (cb.isSelected()) {
-                    badgeDAO.ajouterZone(badge.getId(), (int) cb.getUserData());
+        // Vérification des niveaux d'habilitation
+        List<Integer> zonesSelectionneesIds = new ArrayList<>();
+        int niveauMaxRequis = 0;
+        for (CheckBox cb : zonesCheckboxes) {
+            if (cb.isSelected()) {
+                int zid = (int) cb.getUserData();
+                zonesSelectionneesIds.add(zid);
+                // Trouver le niveau de cette zone
+                Optional<Zone> z = zoneDAO.findById(zid);
+                if (z.isPresent() && z.get().getNiveauSecurite() > niveauMaxRequis) {
+                    niveauMaxRequis = z.get().getNiveauSecurite();
                 }
             }
+        }
+
+        if (intervenant.getNiveauHabilitation() < niveauMaxRequis) {
+            Alert warn = new Alert(Alert.AlertType.WARNING, 
+                "Attention: L'intervenant a un niveau " + intervenant.getNiveauHabilitation() + 
+                ", mais certaines zones sélectionnées requièrent un niveau " + niveauMaxRequis + ".\n" +
+                "L'accès lui sera refusé dans ces zones. Continuer ?",
+                ButtonType.YES, ButtonType.NO);
+            if (warn.showAndWait().orElse(ButtonType.NO) == ButtonType.NO) return;
+        }
+
+        try {
+            Badge b = (badgeSelectionne != null) ? badgeSelectionne : new Badge();
+            b.setCode(codeGenereLabel.getText());
+            b.setTypeBadge(Badge.TypeBadge.valueOf(typeBadgeCombo.getValue()));
+            b.setDateExpiration(dateExpirationPicker.getValue());
+            b.setIntervenantId(intervenant.getId());
+
+            if (badgeSelectionne == null) {
+                b.setEstActif(true);
+                b.setDateCreation(LocalDateTime.now());
+                badgeDAO.save(b);
+            } else {
+                badgeDAO.update(b);
+            }
+
+            // Mise à jour des zones
+            badgeDAO.supprimerZones(b.getId());
+            for (int zid : zonesSelectionneesIds) {
+                badgeDAO.ajouterZone(b.getId(), zid);
+            }
+
             chargerBadges();
-            genererCode();
-            // Décocher les cases
-            zonesCheckboxes.forEach(cb -> cb.setSelected(false));
-            afficherInfo("Badge " + badge.getCode() + " créé avec succès.");
+            if (badgeSelectionne == null) modeCreation();
+            afficherInfo("Badge enregistré avec succès.");
         } catch (Exception e) {
-            afficherErreur("Erreur lors de la création du badge: " + e.getMessage());
+            afficherErreur("Erreur lors de la sauvegarde: " + e.getMessage());
         }
     }
+
 
     /**
      * Révoque le badge sélectionné (désactivation immédiate).

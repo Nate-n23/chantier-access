@@ -295,6 +295,22 @@ public class BadgeDAO {
         if (de != null) b.setDateExpiration(DateUtils.parseDate(de));
         b.setEstActif(rs.getBoolean("est_actif"));
         b.setIntervenantId(rs.getInt("intervenant_id"));
+
+        // Mapping des infos intervenant si présentes (jointure)
+        try {
+            String nom = rs.getString("nom");
+            if (nom != null) {
+                cm.enspy.gcu.chantier.model.entities.Intervenant i = new cm.enspy.gcu.chantier.model.entities.Intervenant();
+                i.setId(b.getIntervenantId());
+                i.setNom(nom);
+                i.setPrenom(rs.getString("prenom"));
+                b.setIntervenant(i);
+            }
+        } catch (SQLException ignored) {
+            // Pas de jointure intervenant dans cette requête
+        }
+
         return b;
     }
+
 }

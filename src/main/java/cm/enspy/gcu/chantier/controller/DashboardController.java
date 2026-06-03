@@ -16,7 +16,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -43,29 +45,8 @@ public class DashboardController {
     @FXML private Label userLabel;
     @FXML private Label roleLabel;
 
-    // KPI Cards
-    @FXML private Label kpiPresents;
-    @FXML private Label kpiAlertes;
-    @FXML private Label kpiBadgesExpires;
-    @FXML private Label kpiIncidents;
-
-    // Chart
-    @FXML private BarChart<String, Number> frequentationChart;
-
-    // Tables
-    @FXML private TableView<Acces> derniersAccesTable;
-    @FXML private TableColumn<Acces, String> colAccesDate;
-    @FXML private TableColumn<Acces, String> colAccesIntervenant;
-    @FXML private TableColumn<Acces, String> colAccesZone;
-    @FXML private TableColumn<Acces, String> colAccesType;
-    @FXML private TableColumn<Acces, String> colAccesStatut;
-
-    @FXML private TableView<Alerte> alertesTable;
-    @FXML private TableColumn<Alerte, String> colAlerteDate;
-    @FXML private TableColumn<Alerte, String> colAlerteMessage;
-    @FXML private TableColumn<Alerte, String> colAlerteGravite;
-
     // Navigation buttons
+    @FXML private Button navDashboard;
     @FXML private Button navIntervenants;
     @FXML private Button navBadges;
     @FXML private Button navAcces;
@@ -74,10 +55,9 @@ public class DashboardController {
     @FXML private Button navRapports;
     @FXML private Button navAdmin;
 
-    private final AccesService accesService = new AccesService();
-    private final AlerteService alerteService = new AlerteService();
     private Timeline refreshTimeline;
     private Timeline sessionCheckTimeline;
+    private HomeController currentHomeController; // Pour rafraichir les données à distance
 
     /**
      * Initialise le tableau de bord après le chargement du FXML.
@@ -86,32 +66,70 @@ public class DashboardController {
     public void initialize() {
         try {
             LOGGER.info("Initialisation du contrôleur du tableau de bord...");
+            
+            // 1. Configurer les infos de session (Sidebar)
             configureHeader();
             configureNavigationRoles();
-            configureTableColumns();
-            chargerDonnees();
+            
+            // 2. Charger l'accueil par défaut
+            navDashboard();
+
+            // 3. Démarrer les tâches de fond
             demarrerRefraichissement();
             demarrerVerificationSession();
+            
             LOGGER.info("Tableau de bord initialisé avec succès.");
         } catch (Exception e) {
             LOGGER.severe("Erreur critique lors de l'initialisation du tableau de bord: " + e.getMessage());
             e.printStackTrace();
-            // On affiche quand même une partie de l'interface si possible
         }
     }
 
+    /**
+     * Affiche la vue d'accueil (KPIs et Graphiques).
+     */
+    @FXML
+    private void navDashboard() {
+        if (navDashboard != null) activerBouton(navDashboard);
+        chargerHome();
+    }
+
+    private void chargerHome() {
+        try {
+            LOGGER.info("Chargement de la vue Accueil...");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cm/enspy/gcu/chantier/fxml/home.fxml"));
+            Node node = loader.load();
+            currentHomeController = loader.getController();
+            contentArea.getChildren().setAll(node);
+        } catch (IOException e) {
+            LOGGER.severe("Erreur chargement home.fxml: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Configure le header avec le nom du chantier et l'utilisateur connecté.
      */
     private void configureHeader() {
         String nomChantier = AppConfig.getInstance().getNomChantier();
-        headerTitle.setText("Chantier Accès — " + nomChantier);
+        if (headerTitle != null) headerTitle.setText("Chantier Accès — " + nomChantier);
+        
         UtilisateurSysteme user = SessionManager.getInstance().getUtilisateurCourant();
         if (user != null) {
-            userLabel.setText(user.getLogin());
-            roleLabel.setText(user.getRole() != null ? user.getRole().name() : "");
+            if (userLabel != null) userLabel.setText(user.getLogin());
+            if (roleLabel != null) roleLabel.setText(user.getRole() != null ? user.getRole().name() : "");
+            LOGGER.info("Header configuré pour utilisateur: " + user.getLogin());
         }
+    }
+
+    private void demarrerRefraichissement() {
+        refreshTimeline = new Timeline(new KeyFrame(Duration.seconds(30), e -> {
+            if (currentHomeController != null) {
+                currentHomeController.chargerDonnees();
+            }
+        }));
+        refreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        refreshTimeline.play();
     }
 
     /**
@@ -130,98 +148,6 @@ public class DashboardController {
         if (!SessionManager.getInstance().isAdmin()) {
             navAdmin.setVisible(false);
         }
-    }
-
-    /**
-     * Configure les colonnes des tables du tableau de bord.
-     */
-    private void configureTableColumns() {
-        colAccesDate.setCellValueFactory(c -> c.getValue().dateHeureProperty());
-        colAccesIntervenant.setCellValueFactory(c -> c.getValue().intervenantNomProperty());
-        colAccesZone.setCellValueFactory(c -> c.getValue().zoneNomProperty());
-        colAccesType.setCellValueFactory(c -> c.getValue().typeProperty());
-        colAccesStatut.setCellValueFactory(c -> c.getValue().statutProperty());
-
-        colAlerteDate.setCellValueFactory(c -> c.getValue().dateHeureProperty());
-        colAlerteMessage.setCellValueFactory(c -> c.getValue().messageProperty());
-        colAlerteGravite.setCellValueFactory(c -> c.getValue().niveauGraviteProperty());
-
-        // Clic sur alerte pour la marquer comme lue
-        alertesTable.setRowFactory(tv -> {
-            TableRow<Alerte> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    Alerte alerte = row.getItem();
-                    alerteService.marquerCommeLue(alerte.getId());
-                    chargerDonnees();
-                }
-            });
-            return row;
-        });
-    }
-
-    /**
-     * Charge toutes les données affichées sur le tableau de bord.
-     */
-    private void chargerDonnees() {
-        try {
-            // KPIs
-            kpiPresents.setText(String.valueOf(accesService.countPresentsAujourdhui()));
-            kpiAlertes.setText(String.valueOf(alerteService.countAlertesNonLues()));
-            kpiBadgesExpires.setText("...");
-            kpiIncidents.setText(String.valueOf(accesService.countIncidentsAujourdhui()));
-        } catch (Exception e) {
-            LOGGER.warning("Erreur chargement KPIs: " + e.getMessage());
-        }
-
-        try {
-            // Derniers accès
-            List<Acces> derniers = accesService.getDerniersAcces(Constants.MAX_DERNIERS_ACCES);
-            derniersAccesTable.setItems(FXCollections.observableArrayList(derniers));
-        } catch (Exception e) {
-            LOGGER.warning("Erreur chargement derniers accès: " + e.getMessage());
-        }
-
-        try {
-            // Alertes non lues
-            List<Alerte> alertes = alerteService.getAlertesNonLues();
-            alertesTable.setItems(FXCollections.observableArrayList(alertes));
-        } catch (Exception e) {
-            LOGGER.warning("Erreur chargement alertes: " + e.getMessage());
-        }
-
-        try {
-            // Graphique de fréquentation
-            chargerGraphique();
-        } catch (Exception e) {
-            LOGGER.warning("Erreur chargement graphique: " + e.getMessage());
-        }
-    }
-
-
-    /**
-     * Charge le graphique de fréquentation des 7 derniers jours.
-     */
-    private void chargerGraphique() {
-        frequentationChart.getData().clear();
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Passages");
-        List<Object[]> freq = accesService.getFrequentationParZone(7);
-        for (Object[] row : freq) {
-            series.getData().add(new XYChart.Data<>((String) row[0], (Integer) row[1]));
-        }
-        frequentationChart.getData().add(series);
-    }
-
-    /**
-     * Démarre le rafraîchissement automatique toutes les 30 secondes.
-     */
-    private void demarrerRefraichissement() {
-        refreshTimeline = new Timeline(new KeyFrame(
-                Duration.seconds(Constants.DASHBOARD_REFRESH_SECONDS),
-                e -> Platform.runLater(this::chargerDonnees)));
-        refreshTimeline.setCycleCount(Timeline.INDEFINITE);
-        refreshTimeline.play();
     }
 
     /**
@@ -254,20 +180,32 @@ public class DashboardController {
 
     // ==================== Navigation ====================
 
-    /** Charge le module Intervenants. */
-    @FXML private void navIntervenants() { chargerModule("/cm/enspy/gcu/chantier/fxml/intervenants.fxml"); }
-    /** Charge le module Badges. */
-    @FXML private void navBadges() { chargerModule("/cm/enspy/gcu/chantier/fxml/badges.fxml"); }
-    /** Charge le module Contrôle d'accès. */
-    @FXML private void navAcces() { chargerModule("/cm/enspy/gcu/chantier/fxml/controle_acces.fxml"); }
-    /** Charge le module Zones. */
-    @FXML private void navZones() { chargerModule("/cm/enspy/gcu/chantier/fxml/zones.fxml"); }
-    /** Charge le module EPI. */
-    @FXML private void navEpi() { chargerModule("/cm/enspy/gcu/chantier/fxml/epi.fxml"); }
-    /** Charge le module Rapports. */
-    @FXML private void navRapports() { chargerModule("/cm/enspy/gcu/chantier/fxml/rapports.fxml"); }
-    /** Charge le module Administration. */
-    @FXML private void navAdmin() { chargerModule("/cm/enspy/gcu/chantier/fxml/administration.fxml"); }
+    @FXML private void navIntervenants() { activerBouton(navIntervenants); chargerModule("/cm/enspy/gcu/chantier/fxml/intervenants.fxml"); }
+    @FXML private void navBadges() { activerBouton(navBadges); chargerModule("/cm/enspy/gcu/chantier/fxml/badges.fxml"); }
+    @FXML private void navAcces() { activerBouton(navAcces); chargerModule("/cm/enspy/gcu/chantier/fxml/controle_acces.fxml"); }
+
+    @FXML private void navZones() { activerBouton(navZones); chargerModule("/cm/enspy/gcu/chantier/fxml/zones.fxml"); }
+    @FXML private void navEpi() { activerBouton(navEpi); chargerModule("/cm/enspy/gcu/chantier/fxml/epi.fxml"); }
+    @FXML private void navRapports() { activerBouton(navRapports); chargerModule("/cm/enspy/gcu/chantier/fxml/rapports.fxml"); }
+    @FXML private void navAdmin() { activerBouton(navAdmin); chargerModule("/cm/enspy/gcu/chantier/fxml/administration.fxml"); }
+
+    /**
+     * Gère l'apparence des boutons de navigation pour indiquer la page active.
+     */
+    private void activerBouton(Button btnActif) {
+        Button[] boutons = {navDashboard, navIntervenants, navBadges, navAcces, navZones, navEpi, navRapports, navAdmin};
+        for (Button b : boutons) {
+            if (b == null) continue;
+            if (b == btnActif) {
+                b.getStyleClass().add("nav-active");
+                b.setStyle(b.getStyle() + "-fx-text-fill: #e94560; -fx-background-color: rgba(233,69,96,0.1);");
+            } else {
+                b.getStyleClass().remove("nav-active");
+                b.setStyle(b.getStyle().replace("-fx-text-fill: #e94560;", "-fx-text-fill: #c0c0d8;")
+                                       .replace("-fx-background-color: rgba(233,69,96,0.1);", "-fx-background-color: transparent;"));
+            }
+        }
+    }
 
     /**
      * Déconnecte l'utilisateur et retourne à l'écran de connexion.
