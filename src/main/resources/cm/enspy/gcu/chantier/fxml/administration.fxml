@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="cm.enspy.gcu.chantier.controller.AdminController"
+            style="-fx-background-color: #1a1a2e; -fx-padding: 20;">
+    <top>
+        <VBox spacing="5" style="-fx-padding: 0 0 15 0;">
+            <Label text="⚙️ Administration" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #e0e0e0;"/>
+            <Label text="Gestion des comptes, journal d'audit, sauvegarde et configuration" style="-fx-font-size: 12px; -fx-text-fill: #8a8aaa;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE"
+                 style="-fx-background-color: transparent;">
+
+            <!-- Onglet Utilisateurs -->
+            <Tab text="👤 Comptes Utilisateurs">
+                <HBox spacing="15" style="-fx-padding: 15;">
+                    <VBox HBox.hgrow="ALWAYS" spacing="10">
+                        <TableView fx:id="utilisateurTable" VBox.vgrow="ALWAYS" prefHeight="400"
+                                   style="-fx-background-color: #0d1b3e;">
+                            <columns>
+                                <TableColumn fx:id="colLogin" text="Login" prefWidth="150"/>
+                                <TableColumn fx:id="colRole" text="Rôle" prefWidth="120"/>
+                                <TableColumn fx:id="colStatutUser" text="Statut" prefWidth="90"/>
+                                <TableColumn fx:id="colDerniereConnexion" text="Dernière connexion" prefWidth="160"/>
+                            </columns>
+                            <placeholder><Label text="Aucun utilisateur" style="-fx-text-fill: #8a8aaa;"/></placeholder>
+                        </TableView>
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <Button text="✏️ Activer/Désactiver" onAction="#handleToggleActif"
+                                    style="-fx-background-color: #ff9800; -fx-text-fill: #000; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 8 14; -fx-cursor: hand;"/>
+                        </HBox>
+                    </VBox>
+                    <VBox prefWidth="290" spacing="10"
+                          style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
+                        <Label fx:id="userFormTitle" text="Nouvel utilisateur"
+                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e94560;"/>
+                        <Separator/>
+                        <Label text="Login *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                        <TextField fx:id="loginField" promptText="Identifiant de connexion"
+                                   style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
+                        <Label text="Mot de passe" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                        <PasswordField fx:id="mdpField" promptText="Mot de passe"
+                                       style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
+                        <Label fx:id="mdpValidLabel" text="" style="-fx-font-size: 11px;"/>
+                        <Label text="Confirmer le mot de passe" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                        <PasswordField fx:id="mdpConfirmField" promptText="Confirmation"
+                                       style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
+                        <Label text="Rôle *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="roleCombo" maxWidth="Infinity"
+                                  style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+                        <Separator/>
+                        <HBox spacing="8">
+                            <Button text="+ Nouveau" onAction="#modeNouvelUtilisateur" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                                    style="-fx-background-color: #16213e; -fx-text-fill: #c0c0d8; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8; -fx-cursor: hand;"/>
+                            <Button text="💾 Sauvegarder" onAction="#handleSauvegarderUtilisateur" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                                    style="-fx-background-color: #e94560; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 8; -fx-cursor: hand;"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- Onglet Journal d'audit -->
+            <Tab text="📋 Journal d'Audit">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <Label text="Journal d'audit — Lecture seule" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e0e0e0;"/>
+                    <TableView fx:id="auditTable" VBox.vgrow="ALWAYS" prefHeight="450"
+                               style="-fx-background-color: #0d1b3e;">
+                        <columns>
+                            <TableColumn fx:id="colAuditDate" text="Date/Heure" prefWidth="160"/>
+                            <TableColumn fx:id="colAuditUser" text="Utilisateur" prefWidth="120"/>
+                            <TableColumn fx:id="colAuditAction" text="Action" prefWidth="300"/>
+                            <TableColumn fx:id="colAuditTable" text="Table" prefWidth="150"/>
+                        </columns>
+                        <placeholder><Label text="Aucune entrée dans le journal" style="-fx-text-fill: #8a8aaa;"/></placeholder>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Onglet Sauvegarde et Configuration -->
+            <Tab text="🔧 Paramètres">
+                <HBox spacing="20" style="-fx-padding: 15;">
+                    <!-- Sauvegarde BDD -->
+                    <VBox spacing="12" prefWidth="350"
+                          style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
+                        <Label text="💾 Sauvegarde Base de Données" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e94560;"/>
+                        <Label text="Crée une copie du fichier SQLite dans ~/ChantierAcces/backup/" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;" wrapText="true"/>
+                        <Button text="🔒 Sauvegarder maintenant" onAction="#handleSauvegarderBDD" maxWidth="Infinity"
+                                style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 12; -fx-cursor: hand;"/>
+                        <Label fx:id="backupStatusLabel" text="" style="-fx-text-fill: #8a8aaa; -fx-font-size: 11px;" wrapText="true"/>
+                    </VBox>
+
+                    <!-- Configuration -->
+                    <VBox spacing="12" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
+                        <Label text="⚙️ Configuration du Chantier" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e94560;"/>
+                        <Label text="Nom du chantier" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                        <TextField fx:id="nomChantierField" promptText="Nom du chantier"
+                                   style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
+                        <Label text="Adresse" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                        <TextField fx:id="adresseChantierField" promptText="Adresse du chantier"
+                                   style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
+                        <Separator/>
+                        <Button text="💾 Sauvegarder configuration" onAction="#handleSauvegarderConfig"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: #e94560; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 10; -fx-cursor: hand;"/>
+                        <Label fx:id="configStatusLabel" text="" style="-fx-text-fill: #8a8aaa; -fx-font-size: 11px;" wrapText="true"/>
+                    </VBox>
+                </HBox>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

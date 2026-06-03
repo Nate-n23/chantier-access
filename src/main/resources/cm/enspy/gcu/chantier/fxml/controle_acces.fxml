@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="cm.enspy.gcu.chantier.controller.AccesController"
+            style="-fx-background-color: #1a1a2e; -fx-padding: 20;">
+    <top>
+        <VBox spacing="5" style="-fx-padding: 0 0 15 0;">
+            <Label text="🔑 Contrôle d'Accès" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #e0e0e0;"/>
+            <Label text="Vérification badge — Accès en temps réel" style="-fx-font-size: 12px; -fx-text-fill: #8a8aaa;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="15">
+            <!-- Zone de contrôle -->
+            <HBox spacing="15" alignment="CENTER_LEFT"
+                  style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
+                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Code Badge" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <TextField fx:id="codeBadgeField" promptText="Scannez ou saisissez le code badge..."
+                               style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 10 12; -fx-font-size: 16px; -fx-font-family: monospace;"/>
+                </VBox>
+                <VBox spacing="8" prefWidth="200">
+                    <Label text="Zone cible" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <ComboBox fx:id="zoneCombo" maxWidth="Infinity"
+                              style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+                </VBox>
+                <VBox spacing="8" alignment="BOTTOM_CENTER" style="-fx-padding: 20 0 0 0;">
+                    <HBox spacing="10">
+                        <Button text="✅ ENTRÉE" onAction="#handleEntree" styleClass="btn-entree"
+                                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-pref-height: 50px; -fx-min-width: 130px; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;"/>
+                        <Button text="🚪 SORTIE" onAction="#handleSortie" styleClass="btn-sortie"
+                                style="-fx-background-color: #e94560; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-pref-height: 50px; -fx-min-width: 130px; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <!-- Résultat -->
+            <VBox fx:id="resultPanel" spacing="5" style="-fx-padding: 15; -fx-background-radius: 10; -fx-border-radius: 10;">
+                <HBox fx:id="resultBox" spacing="15" alignment="CENTER_LEFT"
+                      style="-fx-padding: 15; -fx-background-radius: 8; -fx-border-radius: 8;">
+                    <Label fx:id="resultLabel" text="En attente..." style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #8a8aaa;"/>
+                    <Label fx:id="resultDetail" text="" style="-fx-font-size: 14px; -fx-text-fill: #c0c0d8;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Tables présents + historique -->
+            <HBox spacing="15" VBox.vgrow="ALWAYS">
+                <!-- Présents -->
+                <VBox HBox.hgrow="ALWAYS" spacing="8"
+                      style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 15;">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="👷 Présents en ce moment" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e0e0e0;"/>
+                        <Label fx:id="presentsCountLabel" text="0"
+                               style="-fx-background-color: #e94560; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 8; -fx-font-size: 12px;"/>
+                    </HBox>
+                    <TableView fx:id="presentsTable" VBox.vgrow="ALWAYS" prefHeight="200"
+                               style="-fx-background-color: #0d1b3e;">
+                        <columns>
+                            <TableColumn fx:id="colPresentsNom" text="Intervenant" prefWidth="180"/>
+                            <TableColumn fx:id="colPresentsZone" text="Zone" prefWidth="150"/>
+                            <TableColumn fx:id="colPresentsHeure" text="Heure d'entrée" prefWidth="150"/>
+                        </columns>
+                        <placeholder><Label text="Aucun intervenant présent" style="-fx-text-fill: #8a8aaa;"/></placeholder>
+                    </TableView>
+                </VBox>
+
+                <!-- Historique -->
+                <VBox HBox.hgrow="ALWAYS" spacing="8"
+                      style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 15;">
+                    <Label text="📋 Historique des 20 derniers passages" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e0e0e0;"/>
+                    <TableView fx:id="historiqueTable" VBox.vgrow="ALWAYS" prefHeight="200"
+                               style="-fx-background-color: #0d1b3e;">
+                        <columns>
+                            <TableColumn fx:id="colHistDate" text="Date" prefWidth="140"/>
+                            <TableColumn fx:id="colHistNom" text="Nom" prefWidth="150"/>
+                            <TableColumn fx:id="colHistZone" text="Zone" prefWidth="120"/>
+                            <TableColumn fx:id="colHistType" text="Type" prefWidth="70"/>
+                            <TableColumn fx:id="colHistStatut" text="Statut" prefWidth="90"/>
+                            <TableColumn fx:id="colHistMotif" text="Motif refus" prefWidth="180"/>
+                        </columns>
+                        <placeholder><Label text="Aucun historique" style="-fx-text-fill: #8a8aaa;"/></placeholder>
+                    </TableView>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

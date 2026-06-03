@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="cm.enspy.gcu.chantier.controller.BadgeController"
+            style="-fx-background-color: #1a1a2e; -fx-padding: 20;">
+    <top>
+        <VBox spacing="5" style="-fx-padding: 0 0 15 0;">
+            <Label text="🏷️ Gestion des Badges" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #e0e0e0;"/>
+            <Label text="Attribution, révocation et gestion des zones autorisées" style="-fx-font-size: 12px; -fx-text-fill: #8a8aaa;"/>
+        </VBox>
+    </top>
+    <center>
+        <HBox spacing="15">
+            <!-- Table badges -->
+            <VBox HBox.hgrow="ALWAYS" spacing="10">
+                <TableView fx:id="badgeTable" VBox.vgrow="ALWAYS" prefHeight="520"
+                           style="-fx-background-color: #0d1b3e;">
+                    <columns>
+                        <TableColumn fx:id="colCode" text="Code Badge" prefWidth="130"/>
+                        <TableColumn fx:id="colIntervenant" text="Intervenant" prefWidth="200"/>
+                        <TableColumn fx:id="colType" text="Type" prefWidth="100"/>
+                        <TableColumn fx:id="colExpiration" text="Expiration" prefWidth="120"/>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="80"/>
+                    </columns>
+                    <placeholder><Label text="Aucun badge enregistré" style="-fx-text-fill: #8a8aaa;"/></placeholder>
+                </TableView>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="🚫 Révoquer Badge" onAction="#handleRevoquer"
+                            style="-fx-background-color: #e94560; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 8 16; -fx-cursor: hand;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Formulaire nouveau badge -->
+            <VBox prefWidth="320" spacing="10"
+                  style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
+                <Label fx:id="formTitle" text="Nouveau Badge"
+                       style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #e94560;"/>
+                <Separator/>
+
+                <!-- Code généré -->
+                <Label text="Code généré automatiquement:" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label fx:id="codeGenereLabel" text="--------"
+                           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #e94560; -fx-font-family: monospace;"/>
+                    <Button text="↺" onAction="#genererCode"
+                            style="-fx-background-color: transparent; -fx-text-fill: #8a8aaa; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 4 8; -fx-cursor: hand;"/>
+                </HBox>
+
+                <Label text="Intervenant *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                <ComboBox fx:id="intervenantCombo" maxWidth="Infinity"
+                          style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+
+                <Label text="Type de badge *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                <ComboBox fx:id="typeBadgeCombo" maxWidth="Infinity"
+                          style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+
+                <Label text="Date d'expiration" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                <DatePicker fx:id="dateExpirationPicker" maxWidth="Infinity"
+                            style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+
+                <Label text="Zones autorisées:" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                <ScrollPane prefHeight="130" fitToWidth="true"
+                            style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6;">
+                    <VBox fx:id="zonesContainer" spacing="6" style="-fx-padding: 10; -fx-background-color: #1a1a2e;"/>
+                </ScrollPane>
+
+                <TextArea fx:id="motifRevocationArea" promptText="Motif de révocation (optionnel)"
+                          prefHeight="60" wrapText="true"
+                          style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8;"/>
+
+                <Separator/>
+                <Button text="✅ Créer Badge" onAction="#handleCreer" maxWidth="Infinity"
+                        style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 10; -fx-cursor: hand;"/>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

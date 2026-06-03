@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="cm.enspy.gcu.chantier.controller.LoginController"
+           styleClass="login-container"
+           style="-fx-background-color: #1a1a2e;">
+
+    <!-- Fond dégradé -->
+    <VBox alignment="CENTER" spacing="0" style="-fx-background-color: linear-gradient(to bottom right, #1a1a2e, #0f3460); -fx-min-width: 900; -fx-min-height: 600;">
+
+        <!-- Carte de connexion centrée -->
+        <VBox alignment="CENTER" spacing="0">
+            <VBox styleClass="login-card" spacing="12" alignment="CENTER"
+                  style="-fx-background-color: #0f3460; -fx-background-radius: 16; -fx-padding: 40 50 40 50; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 24, 0, 0, 8); -fx-max-width: 400;">
+
+                <!-- Logo / icône -->
+                <Label text="🏗️" style="-fx-font-size: 48px;"/>
+                <Label text="Chantier Accès" styleClass="login-title"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #e0e0e0;"/>
+                <Label text="Gestion des Accès de Chantier v1.0" styleClass="login-subtitle"
+                       style="-fx-font-size: 13px; -fx-text-fill: #8a8aaa;"/>
+
+                <Separator style="-fx-padding: 5 0 5 0;"/>
+
+                <!-- Champ login -->
+                <VBox spacing="5">
+                    <Label text="Identifiant" styleClass="form-label"
+                           style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <TextField fx:id="loginField" promptText="Entrez votre identifiant"
+                               onKeyPressed="#onKeyPressed"
+                               style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 10 12 10 12; -fx-pref-width: 300;"/>
+                </VBox>
+
+                <!-- Champ mot de passe -->
+                <VBox spacing="5">
+                    <Label text="Mot de passe" styleClass="form-label"
+                           style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <PasswordField fx:id="passwordField" promptText="Entrez votre mot de passe"
+                                  onKeyPressed="#onKeyPressed"
+                                  style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 10 12 10 12; -fx-pref-width: 300;"/>
+                </VBox>
+
+                <!-- Message d'erreur -->
+                <Label fx:id="errorLabel" styleClass="login-error" wrapText="true"
+                       style="-fx-text-fill: #e94560; -fx-font-size: 12px; -fx-background-color: rgba(233,69,96,0.1); -fx-padding: 6 10; -fx-background-radius: 6;"/>
+
+                <!-- Bouton connexion -->
+                <Button fx:id="loginButton" text="SE CONNECTER" onAction="#handleLogin"
+                        maxWidth="Infinity" styleClass="btn-primary"
+                        style="-fx-background-color: #e94560; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 12 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-pref-height: 45;"/>
+
+                <Separator/>
+
+                <!-- Footer -->
+                <Label text="© 2024 ENSPY — Projet Génie Civil et Urbain" styleClass="login-footer"
+                       style="-fx-text-fill: #555577; -fx-font-size: 11px;"/>
+            </VBox>
+        </VBox>
+    </VBox>
+</StackPane>
