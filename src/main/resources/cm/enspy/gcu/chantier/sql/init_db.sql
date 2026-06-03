@@ -117,9 +117,10 @@ CREATE TABLE IF NOT EXISTS journal_audit (
 -- ============================================================
 
 -- Administrateur par défaut: login=admin, mot de passe=Admin123 (SHA-256)
--- SHA-256("Admin123") = a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
+-- SHA-256("Admin123") = 3b612c75a7b5048a435fb6ec81e52ff92d6d795a8b5a9c17070f6a63c97a53b2
 INSERT OR IGNORE INTO utilisateurs_systeme (login, mot_de_passe_hash, role, est_actif)
-VALUES ('admin', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 'ADMIN', 1);
+VALUES ('admin', '3b612c75a7b5048a435fb6ec81e52ff92d6d795a8b5a9c17070f6a63c97a53b2', 'ADMIN', 1);
+
 
 -- Zones de démonstration
 INSERT OR IGNORE INTO zones (id, nom, description, niveau_securite, capacite_max, est_active)
@@ -129,4 +130,5 @@ INSERT OR IGNORE INTO zones (id, nom, description, niveau_securite, capacite_max
 VALUES (2, 'Zone technique', 'Zone des équipements et installations techniques', 3, 20, 1);
 
 INSERT OR IGNORE INTO zones (id, nom, description, niveau_securite, capacite_max, est_active)
-VALUES (3, 'Zone direction', 'Bureaux et salle de réunion de la direction', 4, 10, 1)
+VALUES (3, 'Zone direction', 'Bureaux et salle de réunion de la direction', 4, 10, 1);
+

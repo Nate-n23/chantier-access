@@ -100,15 +100,34 @@ public class DatabaseManager {
             if (is == null) {
                 throw new SQLException("Script SQL init_db.sql introuvable dans les ressources.");
             }
-            String sql = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
-                    .lines()
-                    .collect(Collectors.joining("\n"));
+            
+            // Lecture ligne par ligne pour filtrer les commentaires
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String trimmedLine = line.trim();
+                    // On ignore les lignes vides et les commentaires complets
+                    if (!trimmedLine.isEmpty() && !trimmedLine.startsWith("--")) {
+                        // On retire les commentaires de fin de ligne si présents
+                        int commentIndex = line.indexOf("--");
+                        if (commentIndex >= 0) {
+                            sb.append(line, 0, commentIndex);
+                        } else {
+                            sb.append(line);
+                        }
+                        sb.append(" "); // Espace pour éviter la fusion de mots au split
+                    }
+                }
+            }
+
+            String sql = sb.toString();
 
             // Découpe par point-virgule et exécute chaque instruction
             try (Statement stmt = connection.createStatement()) {
                 for (String instruction : sql.split(";")) {
                     String trimmed = instruction.trim();
-                    if (!trimmed.isEmpty() && !trimmed.startsWith("--")) {
+                    if (!trimmed.isEmpty()) {
                         stmt.execute(trimmed);
                     }
                 }
@@ -118,15 +137,17 @@ public class DatabaseManager {
         }
     }
 
+
     /**
      * Retourne la connexion active à la base de données.
      *
      * @return connexion JDBC active
-     * @throws IllegalStateException si la connexion n'a pas été initialisée
+     * @throws SQLException en cas d'erreur lors de la reconnexion
      */
-    public Connection getConnection() {
-        if (connection == null) {
-            throw new IllegalStateException("La base de données n'a pas été initialisée. Appelez initialize() d'abord.");
+    public Connection getConnection() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            LOGGER.info("Reconnexion à la base de données...");
+            initialize();
         }
         return connection;
     }

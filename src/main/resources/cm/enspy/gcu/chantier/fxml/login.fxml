@@ -56,8 +56,9 @@
                 <Separator/>
 
                 <!-- Footer -->
-                <Label text="© 2024 ENSPY — Projet Génie Civil et Urbain" styleClass="login-footer"
+                <Label text="© 2026 ENSPY — Projet Génie Civil et Urbanisation" styleClass="login-footer"
                        style="-fx-text-fill: #555577; -fx-font-size: 11px;"/>
+
             </VBox>
         </VBox>
     </VBox>

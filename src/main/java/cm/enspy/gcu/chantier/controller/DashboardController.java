@@ -46,7 +46,7 @@ public class DashboardController {
     // KPI Cards
     @FXML private Label kpiPresents;
     @FXML private Label kpiAlertes;
-    @FXML private Label kpiBadgesExpirés;
+    @FXML private Label kpiBadgesExpires;
     @FXML private Label kpiIncidents;
 
     // Chart
@@ -84,13 +84,22 @@ public class DashboardController {
      */
     @FXML
     public void initialize() {
-        configureHeader();
-        configureNavigationRoles();
-        configureTableColumns();
-        chargerDonnees();
-        demarrerRefraichissement();
-        demarrerVerificationSession();
+        try {
+            LOGGER.info("Initialisation du contrôleur du tableau de bord...");
+            configureHeader();
+            configureNavigationRoles();
+            configureTableColumns();
+            chargerDonnees();
+            demarrerRefraichissement();
+            demarrerVerificationSession();
+            LOGGER.info("Tableau de bord initialisé avec succès.");
+        } catch (Exception e) {
+            LOGGER.severe("Erreur critique lors de l'initialisation du tableau de bord: " + e.getMessage());
+            e.printStackTrace();
+            // On affiche quand même une partie de l'interface si possible
+        }
     }
+
 
     /**
      * Configure le header avec le nom du chantier et l'utilisateur connecté.
@@ -155,23 +164,40 @@ public class DashboardController {
      * Charge toutes les données affichées sur le tableau de bord.
      */
     private void chargerDonnees() {
-        // KPIs
-        kpiPresents.setText(String.valueOf(accesService.countPresentsAujourdhui()));
-        kpiAlertes.setText(String.valueOf(alerteService.countAlertesNonLues()));
-        kpiBadgesExpirés.setText("...");
-        kpiIncidents.setText(String.valueOf(accesService.countIncidentsAujourdhui()));
+        try {
+            // KPIs
+            kpiPresents.setText(String.valueOf(accesService.countPresentsAujourdhui()));
+            kpiAlertes.setText(String.valueOf(alerteService.countAlertesNonLues()));
+            kpiBadgesExpires.setText("...");
+            kpiIncidents.setText(String.valueOf(accesService.countIncidentsAujourdhui()));
+        } catch (Exception e) {
+            LOGGER.warning("Erreur chargement KPIs: " + e.getMessage());
+        }
 
-        // Derniers accès
-        List<Acces> derniers = accesService.getDerniersAcces(Constants.MAX_DERNIERS_ACCES);
-        derniersAccesTable.setItems(FXCollections.observableArrayList(derniers));
+        try {
+            // Derniers accès
+            List<Acces> derniers = accesService.getDerniersAcces(Constants.MAX_DERNIERS_ACCES);
+            derniersAccesTable.setItems(FXCollections.observableArrayList(derniers));
+        } catch (Exception e) {
+            LOGGER.warning("Erreur chargement derniers accès: " + e.getMessage());
+        }
 
-        // Alertes non lues
-        List<Alerte> alertes = alerteService.getAlertesNonLues();
-        alertesTable.setItems(FXCollections.observableArrayList(alertes));
+        try {
+            // Alertes non lues
+            List<Alerte> alertes = alerteService.getAlertesNonLues();
+            alertesTable.setItems(FXCollections.observableArrayList(alertes));
+        } catch (Exception e) {
+            LOGGER.warning("Erreur chargement alertes: " + e.getMessage());
+        }
 
-        // Graphique de fréquentation
-        chargerGraphique();
+        try {
+            // Graphique de fréquentation
+            chargerGraphique();
+        } catch (Exception e) {
+            LOGGER.warning("Erreur chargement graphique: " + e.getMessage());
+        }
     }
+
 
     /**
      * Charge le graphique de fréquentation des 7 derniers jours.
@@ -265,13 +291,22 @@ public class DashboardController {
     private void chargerModule(String fxmlPath) {
         SessionManager.getInstance().rafraichirActivite();
         try {
+            LOGGER.info("Chargement du module: " + fxmlPath);
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent vue = loader.load();
             contentArea.getChildren().setAll(vue);
-        } catch (IOException e) {
-            LOGGER.severe("Erreur chargement module " + fxmlPath + ": " + e.getMessage());
+            LOGGER.info("Module " + fxmlPath + " chargé avec succès.");
+        } catch (Exception e) {
+            LOGGER.severe("ERREUR CRITIQUE lors du chargement du module " + fxmlPath);
+            LOGGER.severe("Message: " + e.getMessage());
+            if (e.getCause() != null) {
+                LOGGER.severe("Cause réelle: " + e.getCause().getMessage());
+            }
+            e.printStackTrace();
             new Alert(Alert.AlertType.ERROR,
-                    "Impossible de charger le module:\n" + e.getMessage()).showAndWait();
+                    "Impossible de charger le module " + fxmlPath + ":\n" + 
+                    (e.getCause() != null ? e.getCause().getMessage() : e.getMessage())).showAndWait();
         }
     }
+
 }
