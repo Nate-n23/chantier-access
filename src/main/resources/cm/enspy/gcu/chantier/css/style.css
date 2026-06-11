@@ -109,16 +109,51 @@
 /* Correction spécifique pour DatePicker (le calendrier) */
 .date-picker-popup {
     -fx-background-color: #16213e;
+    -fx-border-color: #0f3460;
+    -fx-border-width: 1;
 }
 
 .date-picker-popup .calendar-header {
     -fx-background-color: #0f3460;
+    -fx-padding: 8 0;
 }
 
+/* Flèches de navigation */
+.date-picker-popup .left-arrow-button, 
+.date-picker-popup .right-arrow-button {
+    -fx-background-color: #16213e;
+    -fx-padding: 5;
+    -fx-cursor: hand;
+}
+
+.date-picker-popup .left-arrow-button:hover, 
+.date-picker-popup .right-arrow-button:hover {
+    -fx-background-color: #e94560;
+}
+
+.date-picker-popup .left-arrow, 
+.date-picker-popup .right-arrow {
+    -fx-background-color: #e0e0e0;
+}
+
+/* Labels Mois / Année */
 .date-picker-popup .label {
     -fx-text-fill: #e0e0e0;
+    -fx-font-weight: bold;
 }
 
+.date-picker-popup .calendar-header .label:hover {
+    -fx-text-fill: #e94560;
+    -fx-cursor: hand;
+}
+
+/* Jours de la semaine */
+.date-picker-popup .day-name-cell {
+    -fx-text-fill: #8a8aaa;
+    -fx-font-size: 11px;
+}
+
+/* Cellules des jours */
 .date-picker-popup .day-cell {
     -fx-text-fill: #e0e0e0;
     -fx-background-color: #16213e;
@@ -136,5 +171,10 @@
 
 .date-picker-popup .today {
     -fx-border-color: #e94560;
+}
+
+.date-picker-popup .previous-month, 
+.date-picker-popup .next-month {
+    -fx-text-fill: #555577;
 }
 

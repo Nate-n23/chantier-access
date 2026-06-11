@@ -62,7 +62,7 @@
                           style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
 
                 <Label text="Date d'expiration" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
-                <DatePicker fx:id="dateExpirationPicker" maxWidth="Infinity"
+                <DatePicker fx:id="dateExpirationPicker" maxWidth="Infinity" editable="true"
                             style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
 
                 <Label text="Zones autorisées:" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px; -fx-font-weight: bold;"/>
