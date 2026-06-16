@@ -43,39 +43,43 @@
             </VBox>
 
             <!-- Formulaire attribution -->
-            <VBox prefWidth="280" spacing="10"
-                  style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
-                <Label text="Attribuer un EPI" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #e94560;"/>
-                <Separator/>
-                <Label text="Intervenant *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
-                <ComboBox fx:id="intervenantCombo" maxWidth="Infinity"
-                          style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
-                <Label text="Type d'EPI *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
-                <ComboBox fx:id="typeEpiCombo" maxWidth="Infinity"
-                          style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
-                <Label text="Taille / Référence" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
-                <TextField fx:id="tailleField" promptText="Ex: L, XL, 42, Standard"
-                           style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
-                <Separator/>
-                <Button text="✅ Attribuer EPI" onAction="#handleAttribuer" maxWidth="Infinity"
-                        style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 10; -fx-cursor: hand;"/>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                        prefWidth="300" minWidth="300" styleClass="edge-to-edge"
+                        style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
+                <VBox spacing="10"
+                      style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
+                    <Label text="Attribuer un EPI" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #e94560;"/>
+                    <Separator/>
+                    <Label text="Intervenant *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <ComboBox fx:id="intervenantCombo" maxWidth="Infinity"
+                              style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+                    <Label text="Type d'EPI *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <ComboBox fx:id="typeEpiCombo" maxWidth="Infinity"
+                              style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+                    <Label text="Taille / Référence" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <TextField fx:id="tailleField" promptText="Ex: L, XL, 42, Standard"
+                               style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
+                    <Separator/>
+                    <Button text="✅ Attribuer EPI" onAction="#handleAttribuer" maxWidth="Infinity"
+                            style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 10; -fx-cursor: hand;"/>
 
-                <!-- Légende états -->
-                <Separator style="-fx-padding: 10 0 0 0;"/>
-                <Label text="Légende états:" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px; -fx-font-weight: bold;"/>
-                <HBox spacing="5" alignment="CENTER_LEFT">
-                    <Label text="●" style="-fx-text-fill: #4caf50; -fx-font-size: 16px;"/>
-                    <Label text="BON — EPI en bon état" style="-fx-text-fill: #8a8aaa; -fx-font-size: 11px;"/>
-                </HBox>
-                <HBox spacing="5" alignment="CENTER_LEFT">
-                    <Label text="●" style="-fx-text-fill: #ff9800; -fx-font-size: 16px;"/>
-                    <Label text="USAGÉ — EPI correctement utilisé" style="-fx-text-fill: #8a8aaa; -fx-font-size: 11px;"/>
-                </HBox>
-                <HBox spacing="5" alignment="CENTER_LEFT">
-                    <Label text="●" style="-fx-text-fill: #e94560; -fx-font-size: 16px;"/>
-                    <Label text="À REMPLACER — EPI hors service" style="-fx-text-fill: #8a8aaa; -fx-font-size: 11px;"/>
-                </HBox>
-            </VBox>
+                    <!-- Légende états -->
+                    <Separator style="-fx-padding: 10 0 0 0;"/>
+                    <Label text="Légende états:" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                    <HBox spacing="5" alignment="CENTER_LEFT">
+                        <Label text="●" style="-fx-text-fill: #4caf50; -fx-font-size: 16px;"/>
+                        <Label text="BON — EPI en bon état" style="-fx-text-fill: #8a8aaa; -fx-font-size: 11px;"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER_LEFT">
+                        <Label text="●" style="-fx-text-fill: #ff9800; -fx-font-size: 16px;"/>
+                        <Label text="USAGÉ — EPI correctement utilisé" style="-fx-text-fill: #8a8aaa; -fx-font-size: 11px;"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER_LEFT">
+                        <Label text="●" style="-fx-text-fill: #e94560; -fx-font-size: 16px;"/>
+                        <Label text="À REMPLACER — EPI hors service" style="-fx-text-fill: #8a8aaa; -fx-font-size: 11px;"/>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
         </HBox>
     </center>
 </BorderPane>

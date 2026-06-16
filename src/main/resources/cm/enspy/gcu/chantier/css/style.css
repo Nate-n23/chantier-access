@@ -69,6 +69,17 @@
     -fx-background-color: #e94560;
 }
 
+/* Style pour les ScrollPane utilisés comme conteneurs transparents */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
 /* --- Navigation Buttons --- */
 .nav-button:hover {
     -fx-background-color: rgba(233, 69, 96, 0.1);

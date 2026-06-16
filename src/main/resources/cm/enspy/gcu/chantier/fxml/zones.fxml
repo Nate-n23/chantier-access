@@ -31,29 +31,33 @@
                     <placeholder><Label text="Aucune zone configurée" style="-fx-text-fill: #8a8aaa;"/></placeholder>
                 </TableView>
             </VBox>
-            <VBox prefWidth="300" spacing="10"
-                  style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
-                <Label fx:id="formTitle" text="Nouvelle Zone"
-                       style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #e94560;"/>
-                <Separator/>
-                <Label text="Nom *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
-                <TextField fx:id="nomField" promptText="Nom de la zone"
-                           style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
-                <Label text="Description" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
-                <TextArea fx:id="descriptionArea" promptText="Description de la zone" prefHeight="80" wrapText="true"
-                          style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
-                <Label text="Niveau de sécurité (1-4)" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
-                <Spinner fx:id="niveauSpinner" maxWidth="Infinity"
-                         style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
-                <Label text="Capacité maximale" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
-                <Spinner fx:id="capaciteSpinner" maxWidth="Infinity"
-                         style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
-                <Separator/>
-                <Button text="💾 Sauvegarder" onAction="#handleSauvegarder" maxWidth="Infinity"
-                        style="-fx-background-color: #e94560; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 10; -fx-cursor: hand;"/>
-                <Button text="🔄 Activer/Désactiver" onAction="#handleDesactiver" maxWidth="Infinity"
-                        style="-fx-background-color: #16213e; -fx-text-fill: #c0c0d8; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8; -fx-cursor: hand;"/>
-            </VBox>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                        prefWidth="320" minWidth="320" styleClass="edge-to-edge"
+                        style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
+                <VBox spacing="10"
+                      style="-fx-background-color: #0f3460; -fx-background-radius: 10; -fx-padding: 20;">
+                    <Label fx:id="formTitle" text="Nouvelle Zone"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #e94560;"/>
+                    <Separator/>
+                    <Label text="Nom *" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <TextField fx:id="nomField" promptText="Nom de la zone"
+                               style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"/>
+                    <Label text="Description" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <TextArea fx:id="descriptionArea" promptText="Description de la zone" prefHeight="80" wrapText="true"
+                              style="-fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+                    <Label text="Niveau de sécurité (1-4)" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <Spinner fx:id="niveauSpinner" maxWidth="Infinity"
+                             style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+                    <Label text="Capacité maximale" style="-fx-text-fill: #8a8aaa; -fx-font-size: 12px;"/>
+                    <Spinner fx:id="capaciteSpinner" maxWidth="Infinity"
+                             style="-fx-background-color: #1a1a2e; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+                    <Separator/>
+                    <Button text="💾 Sauvegarder" onAction="#handleSauvegarder" maxWidth="Infinity"
+                            style="-fx-background-color: #e94560; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 10; -fx-cursor: hand;"/>
+                    <Button text="🔄 Activer/Désactiver" onAction="#handleDesactiver" maxWidth="Infinity"
+                            style="-fx-background-color: #16213e; -fx-text-fill: #c0c0d8; -fx-border-color: #334; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8; -fx-cursor: hand;"/>
+                </VBox>
+            </ScrollPane>
         </HBox>
     </center>
 </BorderPane>
